@@ -30,6 +30,3 @@ Sistema Web empresarial para gestão de uma biblioteca, desenvolvido para fins a
 4. Confirme os dados de conexão em `config/database.php`.
 5. Acesse `http://localhost/sistema-gestao-biblioteca/`.
 
-## Conta de demonstração
-Email: admin@biblioteca.local
-Senha: password

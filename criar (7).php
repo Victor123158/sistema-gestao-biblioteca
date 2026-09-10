@@ -1,0 +1,9 @@
+<?php
+require_once '../config/auth.php'; requireLogin(); require_once '../config/database.php';
+$autores=$conn->query("SELECT * FROM autores ORDER BY nome"); $categorias=$conn->query("SELECT * FROM categorias ORDER BY nome"); $erro='';
+if($_SERVER['REQUEST_METHOD']==='POST'){
+ $titulo=trim($_POST['titulo']); $autor=(int)$_POST['autor_id']; $cat=(int)$_POST['categoria_id']; $ano=(int)$_POST['ano']; $isbn=trim($_POST['isbn']); $q=(int)$_POST['quantidade'];
+ if($titulo && $autor && $cat && $q>0){$s=$conn->prepare("INSERT INTO livros(titulo,autor_id,categoria_id,ano,isbn,quantidade,quantidade_disponivel) VALUES(?,?,?,?,?,?,?)");$s->bind_param('siiisii',$titulo,$autor,$cat,$ano,$isbn,$q,$q);$s->execute();header('Location: index.php');exit;} $erro='Preencha os campos obrigatórios.';
+}
+?>
+<!doctype html><html lang="pt"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Novo livro</title><link rel="stylesheet" href="../assets/css/style.css"></head><body><div class="container"><div class="card"><h1>Novo livro</h1><?php if($erro):?><div class="alert"><?=$erro?></div><?php endif;?><form method="post"><label>Título</label><input name="titulo" required><label>Autor</label><select name="autor_id" required><?php while($a=$autores->fetch_assoc()):?><option value="<?=$a['id']?>"><?=$a['nome']?></option><?php endwhile;?></select><label>Categoria</label><select name="categoria_id" required><?php while($c=$categorias->fetch_assoc()):?><option value="<?=$c['id']?>"><?=$c['nome']?></option><?php endwhile;?></select><label>Ano</label><input type="number" name="ano" min="1000" max="2100"><label>ISBN</label><input name="isbn"><label>Quantidade</label><input type="number" name="quantidade" min="1" required><button>Guardar</button><a class="btn btn-secondary" href="index.php">Cancelar</a></form></div></div></body></html>

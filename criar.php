@@ -1,0 +1,1 @@
+<?php require_once '../config/auth.php';requireLogin();require_once '../config/database.php';$nome=trim($_POST['nome']??'');if($nome){$s=$conn->prepare("INSERT INTO autores(nome) VALUES(?)");$s->bind_param('s',$nome);$s->execute();}header('Location: index.php');exit; ?>

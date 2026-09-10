@@ -1,0 +1,10 @@
+<?php
+require_once '../config/auth.php'; requireLogin(); require_once '../config/database.php';
+$id=(int)($_GET['id']??0); $r=$conn->query("SELECT * FROM livros WHERE id=$id")->fetch_assoc(); if(!$r) die('Livro não encontrado.');
+$autores=$conn->query("SELECT * FROM autores ORDER BY nome"); $categorias=$conn->query("SELECT * FROM categorias ORDER BY nome");
+if($_SERVER['REQUEST_METHOD']==='POST'){
+ $titulo=trim($_POST['titulo']);$autor=(int)$_POST['autor_id'];$cat=(int)$_POST['categoria_id'];$ano=(int)$_POST['ano'];$isbn=trim($_POST['isbn']);$q=(int)$_POST['quantidade'];$dif=$q-(int)$r['quantidade'];$disp=max(0,(int)$r['quantidade_disponivel']+$dif);
+ $s=$conn->prepare("UPDATE livros SET titulo=?,autor_id=?,categoria_id=?,ano=?,isbn=?,quantidade=?,quantidade_disponivel=? WHERE id=?");$s->bind_param('siiisiii',$titulo,$autor,$cat,$ano,$isbn,$q,$disp,$id);$s->execute();header('Location: index.php');exit;
+}
+?>
+<!doctype html><html lang="pt"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Editar livro</title><link rel="stylesheet" href="../assets/css/style.css"></head><body><div class="container"><div class="card"><h1>Editar livro</h1><form method="post"><label>Título</label><input name="titulo" value="<?=htmlspecialchars($r['titulo'])?>" required><label>Autor</label><select name="autor_id"><?php while($a=$autores->fetch_assoc()):?><option value="<?=$a['id']?>" <?=$a['id']==$r['autor_id']?'selected':''?>><?=$a['nome']?></option><?php endwhile;?></select><label>Categoria</label><select name="categoria_id"><?php while($c=$categorias->fetch_assoc()):?><option value="<?=$c['id']?>" <?=$c['id']==$r['categoria_id']?'selected':''?>><?=$c['nome']?></option><?php endwhile;?></select><label>Ano</label><input type="number" name="ano" value="<?=$r['ano']?>"><label>ISBN</label><input name="isbn" value="<?=htmlspecialchars($r['isbn'])?>"><label>Quantidade</label><input type="number" name="quantidade" min="1" value="<?=$r['quantidade']?>" required><button>Actualizar</button></form></div></div></body></html>

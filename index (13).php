@@ -1,0 +1,9 @@
+<?php
+session_start();
+if (!empty($_SESSION['utilizador'])) {
+    header('Location: dashboard.php');
+} else {
+    header('Location: login.php');
+}
+exit;
+?>
